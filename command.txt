@@ -1,0 +1,12 @@
+reset db: 
+- php artisan migrate:fresh
+- php artisan migrate:refresh
+create CM: 
+- php artisan make:controller ItemController --resource --model=Item
+
+create controller:
+- php artisan make:controller CategoryController --resource
+
+create table: 
+- php artisan make:migration create_ten_bang_table
+- php artisan migrate
