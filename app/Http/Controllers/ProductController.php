@@ -23,7 +23,7 @@ class ProductController extends Controller
         // $products = Product::with('productDetail')->get();
         // return response()->json($products);
         $perPage = 16;
-        $products = Product::with('productDetail')->with('productColors')->paginate($perPage);
+        $products = Product::paginate($perPage);
         $responseData = [
             'data' => $products,
         ];
@@ -61,83 +61,8 @@ class ProductController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    // public function store(Request $request)
-    // {
-    //     // Validation rules
-    //     $rules = [
-    //         'category_id' => 'required|exists:categories,category_id',
-    //         'product_sale' => 'numeric',
-    //         'product_name' => 'required|string|max:255',
-    //         'product_price' => 'required|numeric',
-    //         'product_content' => 'string',
-    //         'product_image' => 'required|string',
-    //         'product_status' => 'required|in:1,0',
-
-    //         'product_ram' => 'string',
-    //         'hard_drive' => 'string',
-    //         'product_card' => 'string',
-    //         'desktop' => 'string',
-    //         'colors' => 'required|array', // Đảm bảo colors là một mảng
-    //         'colors.*.color_id' => 'required|exists:colors,color_id', // Kiểm tra color_id trong mỗi phần tử của mảng
-    //         'colors.*.quantity' => 'required|numeric', // Kiểm tra quantity trong mỗi phần tử của mảng
-    //     ];
-
-    //     $request->validate($rules);
-
-    //     // Create the product if validation passes
-    //     $product = Product::create([
-    //         'category_id' => $request->input('category_id'),
-    //         'product_sale' => $request->input('product_sale'),
-    //         'product_name' => $request->input('product_name'),
-    //         'product_price' => $request->input('product_price'),
-    //         'product_content' => $request->input('product_content'),
-    //         'product_image' => $request->input('product_image'),
-    //         'product_status' => $request->input('product_status'),
-    //     ]);
-
-    //     // Create product details
-    //     $productDetail = ProductDetail::create([
-    //         'product_id' => $product->product_id,
-    //         'product_ram' => $request->input('product_ram'),
-    //         'hard_drive' => $request->input('hard_drive'),
-    //         'product_card' => $request->input('product_card'),
-    //         'desktop' => $request->input('desktop'),
-    //     ]);
-
-    //     // Create product colors
-    //     foreach ($request->input('colors') as $color) {
-    //         ProductColor::create([
-    //             'product_id' => $product->product_id,
-    //             'color_id' => $color['color_id'],
-    //             'quantity' => $color['quantity'],
-    //         ]);
-    //     }
-
-    //     return response()->json(['message' => 'Product created successfully', 'data' => $product]);
-    // }
     public function store(Request $request)
     {
-        // Validation rules
-        // $rules = [
-        //     'category_id' => 'required|exists:categories,category_id',
-        //     'product_sale' => 'numeric',
-        //     'product_name' => 'required|string|max:255',
-        //     'product_price' => 'required|numeric',
-        //     // 'product_content' => 'string',
-        //     'product_image' => 'required|string',
-        //     'product_status' => 'required|in:1,0',
-
-        //     'product_ram' => 'string',
-        //     'hard_drive' => 'string',
-        //     'product_card' => 'string',
-        //     'desktop' => 'string',
-        //     'colors' => 'required|array', // Ensure colors is an array
-        //     'colors.*.color_name' => 'required|string|max:255', // Check color_name in each element of the array
-        //     'colors.*.quantity' => 'required|numeric', // Check quantity in each element of the array
-        // ];
-
-        // $request->validate($rules);
-
         // Create the product if validation passes
         $product = Product::create([
             'category_id' => $request->input('category_id'),
@@ -218,38 +143,6 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    // public function update(Request $request, Product $product)
-    // {
-    //     // Kiểm tra xem sản phẩm tồn tại không
-    //     if (!$product) {
-    //         return response()->json(['message' => 'Product not found'], 404);
-    //     }
-
-    //     // Validate dữ liệu từ request
-    //     $request->validate([
-    //         'category_id' => 'required|exists:categories,category_id',
-    //         'product_sale' => 'numeric',
-    //         'product_name' => 'required|string',
-    //         'product_price' => 'required|numeric',
-    //         'product_content' => 'string',
-    //         'product_image' => 'required|string',
-    //         'product_status' => ['required', Rule::in(['1', '0'])],
-    //     ]);
-
-    //     // Cập nhật thông tin sản phẩm
-    //     $product->update([
-    //         'category_id' => $request->input('category_id'),
-    //         'product_sale' => $request->input('product_sale'),
-    //         'product_name' => $request->input('product_name'),
-    //         'product_price' => $request->input('product_price'),
-    //         'product_content' => $request->input('product_content'),
-    //         'product_image' => $request->input('product_image'),
-    //         'product_status' => $request->input('product_status'),
-    //     ]);
-
-    //     // Trả về phản hồi với thông báo
-    //     return response()->json(['message' => 'Product updated successfully', 'data' => $product]);
-    // }
     public function update(Request $request, Product $product)
     {
         // Validate dữ liệu đầu vào
@@ -285,16 +178,31 @@ class ProductController extends Controller
             ]
         );
 
-        // Update hoặc tạo mới thông tin của bảng product_colors
-        $colors = $request->input('colors');
+        // Create product colors
+        foreach ($request->input('colors') as $color) {
+            // Check if color already exists
+            $existingColor = Color::where('color_name', $color['color_name'])->first();
 
-        foreach ($colors as $color) {
-            $product->productColors()->updateOrCreate(
-                ['color_id' => $color['color_id']],
-                ['quantity' => $color['quantity']]
-            );
+            if (!$existingColor) {
+                // Create the color if it doesn't exist
+                $createdColor = Color::create([
+                    'color_name' => $color['color_name'],
+                ]);
+
+                ProductColor::create([
+                    'product_id' => $product->product_id,
+                    'color_id' => $createdColor->color_id,
+                    'quantity' => $color['quantity'],
+                ]);
+            } else {
+                // Use the existing color
+                ProductColor::create([
+                    'product_id' => $product->product_id,
+                    'color_id' => $existingColor->color_id,
+                    'quantity' => $color['quantity'],
+                ]);
+            }
         }
-
         return response()->json(['message' => 'Product updated successfully']);
     }
 
@@ -475,5 +383,33 @@ class ProductController extends Controller
         } catch (\Exception $e) {
             return response()->json(['message' => 'Error retrieving products', 'error' => $e->getMessage()], 500);
         }
+    }
+
+    public function getAllProductsExceptInactiveCategories()
+    {
+        $perPage = 16;
+        $products =  Product::with('productDetail')->with('productColors')->whereHas('category', function ($query) {
+            $query->where('category_status', '!=', 0);
+        })->paginate($perPage);
+
+        $responseData = [
+            'data' => $products,
+        ];
+
+        return response()->json($responseData);
+    }
+
+    public function updateProductStatus(Request $request, Product $product)
+    {
+        // Validate dữ liệu đầu vào
+        $request->validate([
+            'product_status' => 'required|in:0,1',
+        ]);
+
+        $product->update([
+            'product_status' => $request->input('product_status'),
+        ]);
+
+        return response()->json(['message' => 'Product status updated successfully']);
     }
 }

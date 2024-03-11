@@ -16,11 +16,8 @@ class NewsController extends Controller
     {
         $perPage = 16;
         $news = News::paginate($perPage);
-        $responseData = [
-            'data' => $news,
-        ];
 
-        return response()->json($responseData);
+        return response()->json($news);
     }
 
     /**
@@ -120,5 +117,42 @@ class NewsController extends Controller
     {
         $news->delete();
         return response()->json(['message' => 'News deleted successfully']);
+    }
+
+    public function getNewsDetail($newsId)
+    {
+        try {
+            // Lấy ra chi tiết của news với $newsId
+            $news = News::findOrFail($newsId);
+
+            // Trả về dữ liệu JSON chứa chi tiết của news
+            return response()->json($news);
+
+        } catch (\Exception $e) {
+            // Xử lý nếu không tìm thấy news
+            return response()->json(['error' => 'News not found'], 404);
+        }
+    }
+
+    public function getAllNewsInactive()
+    {
+        $perPage = 16;
+        $news = News::where('news_status', '!=', 0)->paginate($perPage);
+
+        return response()->json($news);
+    }
+
+    public function updateNewsStatus(Request $request, News $news)
+    {
+        // Validate dữ liệu đầu vào
+        $request->validate([
+            'news_status' => 'required|in:0,1',
+        ]);
+
+        $news->update([
+            'news_status' => $request->input('news_status'),
+        ]);
+
+        return response()->json(['message' => 'News status updated successfully']);
     }
 }

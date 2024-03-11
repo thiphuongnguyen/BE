@@ -18,12 +18,9 @@ class CustomerController extends Controller
     public function index()
     {
         $perPage = 16;
-        $customer = Customers::paginate($perPage);
-        $responseData = [
-            'data' => $customer,
-        ];
+        $customer = Customers::select('customer_id', 'customer_name','customer_phone')->paginate($perPage);
 
-        return response()->json($responseData);
+        return response()->json($customer);
     }
 
     /**
@@ -183,6 +180,17 @@ class CustomerController extends Controller
                 'message' => 'Authentication failed',
                 'data' => [],
             ]);
+        }
+    }
+
+    public function getCustomerDetail($customerId)
+    {
+        $customer = Customers::find($customerId);
+
+        if ($customer) {
+            return response()->json($customer);
+        } else {
+            return response()->json(['message' => 'Không tìm thấy khách hàng'], 404);
         }
     }
 }

@@ -13,12 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('news', function (Blueprint $table) {
-            $table->id('news_id');
-            $table->string('news_name');
-            $table->text('news_content');
-            $table->string('news_image');
-            $table->integer('news_status');
+        Schema::create('coupon', function (Blueprint $table) {
+            $table->id('coupon_id');
+            $table->string('coupon_code');
+            $table->decimal('coupon_discount', 10, 2);
+            $table->date('coupon_expiry_date');
             $table->timestamps();
         });
     }
@@ -30,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('news');
+        Schema::dropIfExists('coupon');
     }
 };

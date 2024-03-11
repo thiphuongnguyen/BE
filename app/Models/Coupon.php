@@ -5,12 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Gallery extends Model
+class Coupon extends Model
 {
     use HasFactory;
-    protected $fillable = ['product_id','gallery_image'];
-    protected $primaryKey = 'gallery_id';
-    protected $table = 'galleries';
+
+    protected $fillable = ['coupon_code','coupon_discount','coupon_expiry_date'];
+    protected $primaryKey = 'coupon_id';
+    protected $table = 'coupon';
 
     protected $hidden = ['created_at', 'updated_at'];
 }

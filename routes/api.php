@@ -12,6 +12,7 @@ use App\Http\Controllers\AddressController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\NewsController;
+use App\Http\Controllers\CouponController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,6 +40,8 @@ Route::get('/products/random', [ProductController::class, 'getRandomEightProduct
 Route::get('/products/{category_id}', [ProductController::class, 'getProductsByCategory']);
 Route::get('/products/detail/{product_id}', [ProductController::class, 'getProductDetail']);
 Route::get('/products/related/{category_id}/{product_id}', [ProductController::class, 'getFourProductsByCategory']);
+Route::get('/allproducts', [ProductController::class, 'getAllProductsExceptInactiveCategories']);
+Route::put('/products/updateStatus/{product}', [ProductController::class, 'updateProductStatus']);
 
 
 // Danh sách tất cả sliders
@@ -51,8 +54,8 @@ Route::put('/sliders/{slider}', [SliderController::class, 'update']);
 Route::delete('/sliders/{slider}', [SliderController::class, 'destroy']);
 
 // Order
-Route::post('/order', [OrderController::class, 'store']);
 Route::get('/order', [OrderController::class, 'index']);
+Route::post('/order', [OrderController::class, 'store']);
 Route::get('/order/{customer_id}', [OrderController::class, 'getOrdersByCustomerId']);
 Route::put('/order/{order_id}', [OrderController::class, 'update']);
 
@@ -69,6 +72,7 @@ Route::post('/customer/login', [CustomerController::class, 'login']);
 Route::get('/customer', [CustomerController::class, 'index']);
 Route::put('/customer/{customer}', [CustomerController::class, 'update']);
 Route::delete('/customer/{customer}', [CustomerController::class, 'destroy']);
+Route::get('/customer/detail/{customer}', [CustomerController::class, 'getCustomerDetail']);
 
 // Category
 Route::get('/category', [CategoryController::class, 'index']);
@@ -91,7 +95,17 @@ Route::post('/admin', [AdminController::class, 'store']);
 Route::post('/admin/login', [AdminController::class, 'login']);
 
 // News
-Route::post('/news', [NewsController::class, 'store']);
 Route::get('/news', [NewsController::class, 'index']);
+Route::post('/news', [NewsController::class, 'store']);
 Route::put('/news/{news}', [NewsController::class, 'update']);
 Route::delete('/news/{news}', [NewsController::class, 'destroy']);
+Route::get('/news/{news_id}', [NewsController::class, 'getNewsDetail']);
+Route::get('/allNews', [NewsController::class, 'getAllNewsInactive']);
+Route::put('/news/updateStatus/{news}', [NewsController::class, 'updateNewsStatus']);
+
+// Coupon
+Route::get('/coupon', [CouponController::class, 'index']);
+Route::post('/coupon', [CouponController::class, 'store']);
+Route::put('/coupon/{coupon}', [CouponController::class, 'update']);
+Route::delete('/coupon/{coupon}', [CouponController::class, 'destroy']);
+Route::get('/allCoupon', [CouponController::class, 'getAllCouponInactive']);

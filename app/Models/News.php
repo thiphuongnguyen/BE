@@ -12,5 +12,5 @@ class News extends Model
     protected $primaryKey = 'news_id';
     protected $table = 'news';
 
-    protected $hidden = ['created_at', 'updated_at'];
+    // protected $hidden = ['created_at', 'updated_at'];
 }
