@@ -10,9 +10,3 @@ create controller:
 create table: 
 - php artisan make:migration create_ten_bang_table
 - php artisan migrate
-
-run backend
-open xampp -> php artisan serve
-
-run frontend
-yarn dev

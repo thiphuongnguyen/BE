@@ -13,6 +13,8 @@ use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\CouponController;
+use App\Http\Controllers\ProductColorController;
+use App\Http\Controllers\VnpayPaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,6 +44,7 @@ Route::get('/products/detail/{product_id}', [ProductController::class, 'getProdu
 Route::get('/products/related/{category_id}/{product_id}', [ProductController::class, 'getFourProductsByCategory']);
 Route::get('/allproducts', [ProductController::class, 'getAllProductsExceptInactiveCategories']);
 Route::put('/products/updateStatus/{product}', [ProductController::class, 'updateProductStatus']);
+Route::delete('/products/color/{product_color}', [ProductColorController::class, 'destroy']);
 
 
 // Danh sách tất cả sliders
@@ -58,6 +61,10 @@ Route::get('/order', [OrderController::class, 'index']);
 Route::post('/order', [OrderController::class, 'store']);
 Route::get('/order/{customer_id}', [OrderController::class, 'getOrdersByCustomerId']);
 Route::put('/order/{order_id}', [OrderController::class, 'update']);
+Route::get('/order/detail/{order_id}', [OrderController::class, 'getOrderDetail']);
+Route::get('/dailySales/{start_date}/{end_date}', [OrderController::class, 'getDailySalesBetweenDates']);
+Route::get('/distinctPayments', [OrderController::class, 'countDistinctPayments']);
+
 
 //Cart
 Route::post('/carts', [CartController::class, 'store']);
@@ -69,6 +76,7 @@ Route::put('/cart/customer/{customer_id}', [CartController::class, 'update']);
 // Customer
 Route::post('/customer', [CustomerController::class, 'store']);
 Route::post('/customer/login', [CustomerController::class, 'login']);
+Route::post('/customer/google', [CustomerController::class, 'loginOrSignUp']);
 Route::get('/customer', [CustomerController::class, 'index']);
 Route::put('/customer/{customer}', [CustomerController::class, 'update']);
 Route::delete('/customer/{customer}', [CustomerController::class, 'destroy']);
@@ -109,3 +117,6 @@ Route::post('/coupon', [CouponController::class, 'store']);
 Route::put('/coupon/{coupon}', [CouponController::class, 'update']);
 Route::delete('/coupon/{coupon}', [CouponController::class, 'destroy']);
 Route::get('/allCoupon', [CouponController::class, 'getAllCouponInactive']);
+Route::get('/couponByCode', [CouponController::class, 'getCouponDiscountByCode']);
+
+Route::post('/vnpay-payment', [VnpayPaymentController::class, 'createPayment']);

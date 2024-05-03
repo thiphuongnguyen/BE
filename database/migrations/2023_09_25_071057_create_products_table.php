@@ -23,7 +23,6 @@ return new class extends Migration
             $table->text('product_name');
             $table->text('product_content')->nullable();
             $table->text('product_sale')->nullable();
-            $table->double('product_price');
             $table->string('product_image')->nullable();
             $table->integer('product_status');
             $table->timestamps();

@@ -9,7 +9,7 @@ class Slider extends Model
 {
     use HasFactory;
     public $timestamps = false;
-    protected $fillable = ['slider_name','slider_image','slider_status'];
+    protected $fillable = ['slider_name', 'slider_content','slider_image','slider_status'];
     protected $primaryKey = 'slider_id';
     protected $table = 'sliders';
 

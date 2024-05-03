@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('product_id');
             $table->unsignedBigInteger('color_id');
             $table->integer('quantity')->default(0); // assuming you want to track the quantity of each color for a product
+            $table->double('product_price');
             $table->timestamps();
 
             // Foreign keys

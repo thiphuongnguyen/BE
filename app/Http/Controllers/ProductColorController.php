@@ -80,6 +80,14 @@ class ProductColorController extends Controller
      */
     public function destroy(ProductColor $productColor)
     {
-        //
+        if ($productColor) {
+            $productColor->delete();
+
+            // Trả về phản hồi với thông báo
+            return response()->json(['message' => 'product color deleted successfully'], 200);
+        } else {
+            // Trả về phản hồi nếu slider không tồn tại
+            return response()->json(['message' => 'product color not found'], 404);
+        }
     }
 }

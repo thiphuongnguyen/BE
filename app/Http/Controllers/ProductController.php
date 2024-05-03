@@ -68,7 +68,6 @@ class ProductController extends Controller
             'category_id' => $request->input('category_id'),
             'product_sale' => $request->input('product_sale'),
             'product_name' => $request->input('product_name'),
-            'product_price' => $request->input('product_price'),
             'product_content' => $request->input('product_content'),
             'product_image' => $request->input('product_image'),
             'product_status' => $request->input('product_status'),
@@ -98,6 +97,7 @@ class ProductController extends Controller
                     'product_id' => $product->product_id,
                     'color_id' => $createdColor->color_id,
                     'quantity' => $color['quantity'],
+                    'product_price' => $color['price'],
                 ]);
             } else {
                 // Use the existing color
@@ -105,11 +105,12 @@ class ProductController extends Controller
                     'product_id' => $product->product_id,
                     'color_id' => $existingColor->color_id,
                     'quantity' => $color['quantity'],
+                    'product_price' => $color['price'],
                 ]);
             }
         }
 
-        return response()->json(['message' => 'Product created successfully', 'data' => $product]);
+        return response()->json(['message' => 'Product created successfully'], 201);
     }
 
 
@@ -151,7 +152,7 @@ class ProductController extends Controller
             'product_sale' => 'numeric',
             'product_name' => 'string|max:255',
             'product_price' => 'numeric',
-            'product_content' => 'string',
+            // 'product_content' => 'string',
             'product_image' => 'string',
             'product_status' => 'in:1,0',
         ]);
@@ -161,7 +162,6 @@ class ProductController extends Controller
             'category_id' => $request->input('category_id'),
             'product_sale' => $request->input('product_sale'),
             'product_name' => $request->input('product_name'),
-            'product_price' => $request->input('product_price'),
             'product_content' => $request->input('product_content'),
             'product_image' => $request->input('product_image'),
             'product_status' => $request->input('product_status'),
@@ -193,16 +193,33 @@ class ProductController extends Controller
                     'product_id' => $product->product_id,
                     'color_id' => $createdColor->color_id,
                     'quantity' => $color['quantity'],
+                    'product_price' => $color['price'],
                 ]);
             } else {
                 // Use the existing color
-                ProductColor::create([
-                    'product_id' => $product->product_id,
-                    'color_id' => $existingColor->color_id,
-                    'quantity' => $color['quantity'],
-                ]);
+                // Check if the product color already exists for this product and color combination
+                $existingProductColor = ProductColor::where('product_id', $product->product_id)
+                                                    ->where('color_id', $existingColor->color_id)
+                                                    ->first();
+
+                if ($existingProductColor) {
+                    // If the product color already exists, update the quantity and price
+                    $existingProductColor->update([
+                        'quantity' => $color['quantity'],
+                        'product_price' => $color['price'],
+                    ]);
+                } else {
+                    // If the product color doesn't exist, create it
+                    ProductColor::create([
+                        'product_id' => $product->product_id,
+                        'color_id' => $existingColor->color_id,
+                        'quantity' => $color['quantity'],
+                        'product_price' => $color['price'],
+                    ]);
+                }
             }
         }
+
         return response()->json(['message' => 'Product updated successfully']);
     }
 
@@ -275,6 +292,7 @@ class ProductController extends Controller
             ->whereHas('category', function ($query) {
                 $query->where('category_status', '!=', 0);
             })
+            ->with('productColors')
             ->paginate($perPage, ['*'], 'page', $currentPage);
 
             if ($products->isEmpty()) {
@@ -325,7 +343,7 @@ class ProductController extends Controller
             }
 
             // Exclude the provided product_id from the query and limit to 4 results
-            $products = $category->products()
+            $products = $category->products()->with('productColors')
                 ->where('product_id', '!=', $product_id)
                 ->whereHas('category', function ($query) {
                     $query->where('category_status', '!=', 0);
@@ -348,7 +366,7 @@ class ProductController extends Controller
     {
         try {
             // Retrieve the latest products without considering a specific category
-            $latestProducts = Product::orderBy('created_at', 'desc')
+            $latestProducts = Product::with('productColors')->orderBy('created_at', 'desc')
             ->whereHas('category', function ($query) {
                 $query->where('category_status', '!=', 0);
             })
@@ -368,7 +386,7 @@ class ProductController extends Controller
     public function getRandomEightProducts()
     {
         try {
-            $products = Product::inRandomOrder()
+            $products = Product::with('productColors')->inRandomOrder()
             ->whereHas('category', function ($query) {
                 $query->where('category_status', '!=', 0);
             })

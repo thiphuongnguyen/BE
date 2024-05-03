@@ -15,7 +15,7 @@ class SliderController extends Controller
      */
     public function index()
     {
-        return Slider::select('slider_name', 'slider_image', 'slider_status')->get();
+        return Slider::get();
     }
 
     /**
@@ -39,6 +39,7 @@ class SliderController extends Controller
         // Validate dữ liệu đầu vào
         $validatedData = $request->validate([
             'slider_name' => 'required|string|max:255',
+            'slider_content' => 'string',
             'slider_image' => 'required|url',
             'slider_status' => 'required|in:1,0',
         ]);
@@ -85,6 +86,7 @@ class SliderController extends Controller
         // Validate dữ liệu đầu vào
         $validatedData = $request->validate([
             'slider_name' => 'required|string|max:255',
+            'slider_content' => 'string',
             'slider_image' => 'required|url',
             'slider_status' => ['required', Rule::in(['1', '0'])],
         ]);

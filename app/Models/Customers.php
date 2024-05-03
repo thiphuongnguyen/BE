@@ -12,7 +12,7 @@ class Customers extends Model
     use HasApiTokens;
 
     // public $timestamps = false;
-    protected $fillable = ['customer_name','customer_password','customer_phone','customer_token'];
+    protected $fillable = ['customer_name','customer_password','customer_fullname', 'customer_image','customer_phone','customer_token'];
     protected $primaryKey = 'customer_id';
     protected $table = 'customers';
 

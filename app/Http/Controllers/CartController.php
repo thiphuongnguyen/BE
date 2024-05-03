@@ -154,10 +154,10 @@ class CartController extends Controller
     {
         $cartItems = Cart::with([
             'productDetail' => function ($query) {
-                $query->select('product_id', 'product_name', 'product_price', 'product_image', 'product_sale');
+                $query->select('product_id', 'product_name', 'product_image', 'product_sale');
             },
             'productColors' => function ($query) {
-                $query->select('product_id', 'color_id', 'quantity');
+                $query->select('product_id', 'color_id', 'quantity', 'product_price');
             },
         ])->where('customer_id', $customerId)->get(['customer_id', 'product_id', 'color_id', 'product_quantity']);
 
